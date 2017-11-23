@@ -2,9 +2,15 @@
 
 	(php_sapi_name() === 'cli') or die("cli only");
 	require_once __DIR__ . '/vendor/autoload.php';
+	spl_autoload_register(function($class) { require_once __DIR__ . "/{$class}.php"; });
+
+	//name of the file both local and remote... 
+	//the local must be in the root folder of the project
 	define('__FILE_NAME__', 'access_encrypted.txt');
 
-	spl_autoload_register(function($class) { require_once __DIR__ . "/{$class}.php"; });
+	//no of lines to show above and below a line where a search result was found
+	//set 0 to disable
+	define('__LINES_BUFFER__', 2);
 
 	$auth = new GoogleDriveAuthenticator();
 	$service = new GoogleDriveInteractor( new Google_Service_Drive($auth->getClient()) );
@@ -59,8 +65,27 @@
 			$fileasarray = explode(PHP_EOL, $new_file_content);
 			foreach ($fileasarray as $i=>$k) {
 				if(preg_match($tosearch, $k) === 1) {
-					echo "Found {$tosearch} on line {$i}: \n";
-					echo $k . PHP_EOL;
+
+					for ($a=1; $a <= __LINES_BUFFER__; $a++) { 
+						if(!isset($fileasarray[$i-$a]))
+							break;
+						if(empty(trim($fileasarray[$i-$a])))
+							continue;
+						echo $fileasarray[$i-$a] . PHP_EOL . "-------" . PHP_EOL;
+					}
+
+					echo Colorizer::set("Found {$tosearch} on line {$i}:", "yellow+bold") . PHP_EOL;
+					echo Colorizer::set($k, "green") . PHP_EOL;
+
+
+					for ($a=1; $a <= __LINES_BUFFER__; $a++) { 
+						if(!isset($fileasarray[$i+$a]))
+							break;
+						if(empty(trim($fileasarray[$i+$a])))
+							continue;
+						echo $fileasarray[$i+$a] . PHP_EOL . "-------" . PHP_EOL;
+					}
+
 				}
 			}
 		}
