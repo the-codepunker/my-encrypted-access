@@ -1,0 +1,7 @@
+/secret.json
+/*.txt
+/vendor
+/.DS_Store
+/credentials.json
+/composer.lock
+/access.sublime*
