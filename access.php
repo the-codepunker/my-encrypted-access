@@ -2,7 +2,7 @@
 
 	(php_sapi_name() === 'cli') or die("cli only");
 	require_once __DIR__ . '/vendor/autoload.php';
-	define('LOCAL_FILE_NAME', 'access.decrypted.txt');
+	define('__FILE_NAME__', 'access_encrypted.txt');
 
 	spl_autoload_register(function($class) { require_once __DIR__ . "/{$class}.php"; });
 
@@ -11,7 +11,7 @@
 
 	try {
 		$file = $service->findFiles([
-	    	'q'			=> "name contains 'access_encrypted.txt' and trashed = false",
+	    	'q'			=> "name contains '" . __FILE_NAME__ . "' and trashed = false",
 	    	'orderBy'	=> "modifiedTime desc",
 	    	'spaces'	=> "drive"
 	    ], $expected=1);
@@ -35,14 +35,14 @@
 	} else if($line=="encrypt local") {
 		print "Type your password: \n";
 		$key = trim(fgets(STDIN));
-		$file_content_local = file_get_contents(__DIR__ . '/' . LOCAL_FILE_NAME);
+		$file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
 		$new_file_content = OpenSsl::encrypt($file_content_local, $key);
 		print "File encrypted. Want to push it to drive ? (yes/no) \n";
 		$push = trim(fgets(STDIN));
 		if($push == 'yes')
 			$service->updateFile($file, $new_file_content);
 		else if ($push == 'no')
-			file_put_contents(__DIR__ . '/' . LOCAL_FILE_NAME, $new_file_content);
+			file_put_contents(__DIR__ . '/' . __FILE_NAME__, $new_file_content);
 		else
 			echo "What ?" . PHP_EOL;
 	} else if($line=="decrypt") {
@@ -54,7 +54,7 @@
 		$tosearch = trim(fgets(STDIN));
 
 		if(empty($tosearch)) {
-			file_put_contents(__DIR__ . '/' . LOCAL_FILE_NAME, $new_file_content);
+			file_put_contents(__DIR__ . '/' . __FILE_NAME__, $new_file_content);
 		} else {
 			$fileasarray = explode(PHP_EOL, $new_file_content);
 			foreach ($fileasarray as $i=>$k) {
