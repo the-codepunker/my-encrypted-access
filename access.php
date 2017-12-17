@@ -17,8 +17,7 @@
 
 	if(empty($argv[1])) {
 		print "What to do ?
-		- To encrypt a remote file and push it back up to gDrive type 'encrypt-remote'
-		- To encrypt a local file type 'encrypt-local'
+		- To encrypt a local file type 'encrypt'
 		- To decrypt and search in the file type 'decrypt'
 		- To add something to the file and the re-upload it as encrypted type 'add'\n";
 		$line = trim(fgets(STDIN));
@@ -36,11 +35,7 @@
 		print "An error occurred: " . $e->getMessage() . PHP_EOL; exit;
 	}
 
-	if($line=="encrypt-remote") {
-		$key = CliHacker::pass();
-		$new_file_content = OpenSsl::encrypt($file_content, $key);
-		$service->updateFile($file, $new_file_content);
-	} else if($line=="encrypt-local") {
+	if($line=="encrypt") {
 		$key = CliHacker::pass();
 		$file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
 		$new_file_content = OpenSsl::encrypt($file_content_local, $key);
