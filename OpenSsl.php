@@ -2,7 +2,8 @@
 
 	class OpenSsl
 	{
-		static function encrypt($plain, $key) {
+		static function encrypt($plain, $key)
+		{
 			//make the key exactly 32 alpha numeric chars this should be fine for "easy to remember keys"... not cryptographically secure though
 			$key = md5($key);
 
@@ -15,7 +16,8 @@
 			return $ciphertext; // includes iv + hmac + encrypted raw text all concatenated and base64 encoded
 		}
 
-		static function decrypt($key, $ciphertext) {
+		static function decrypt($key, $ciphertext) 
+		{
 			$c = base64_decode($ciphertext); //decode first
 			$key = md5($key);
 
@@ -34,6 +36,5 @@
 			} else {
 				return 'Unable to decrypt' . PHP_EOL;
 			}
-
 		}
 	}

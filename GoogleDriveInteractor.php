@@ -29,15 +29,12 @@
 			return (count($files)===1) ? $files[0] : $files;
 		}
 
-		function updateFile(Google_Service_Drive_DriveFile $drive_file, string $data) {
+		function updateFile(Google_Service_Drive_DriveFile $drive_file, string $data)
+		{
 
 			$new_drive_file = new Google_Service_Drive_DriveFile();
-			// $file->setTitle($newTitle);
-			// $file->setDescription($newDescription);
-			// $file->setMimeType($newMimeType);
 
 			$additionalParams = array(
-				//'newRevision' => false,
 				'data' => $data,
 				'mimeType' => 'text/plain'
 			);

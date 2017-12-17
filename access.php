@@ -15,6 +15,16 @@
 	$auth = new GoogleDriveAuthenticator();
 	$service = new GoogleDriveInteractor( new Google_Service_Drive($auth->getClient()) );
 
+	if(empty($argv[1])) {
+		print "What to do ?
+		- To encrypt a remote file and push it back up to gDrive type 'encrypt-remote'
+		- To encrypt a local file type 'encrypt-local'
+		- To decrypt and search in the file type 'decrypt'
+		- To add something to the file and the re-upload it as encrypted type 'add'\n";
+		$line = trim(fgets(STDIN));
+	} else 
+		$line = trim($argv[1]);
+
 	try {
 		$file = $service->findFiles([
 	    	'q'			=> "name contains '" . __FILE_NAME__ . "' and trashed = false",
@@ -26,21 +36,12 @@
 		print "An error occurred: " . $e->getMessage() . PHP_EOL; exit;
 	}
 
-	print "What to do ?
-	- To encrypt a remote file and push it back up to gDrive type 'encrypt remote'
-	- To encrypt a local file type 'encrypt local'
-	- To decrypt and search in the file type 'decrypt'
-	- To add something to the file and the re-upload it as encrypted type 'add'\n";
-	$line = trim(fgets(STDIN));
-
-	if($line=="encrypt remote") {
-		print "Type your password: \n";
-		$key = trim(fgets(STDIN));
+	if($line=="encrypt-remote") {
+		$key = CliHacker::pass();
 		$new_file_content = OpenSsl::encrypt($file_content, $key);
 		$service->updateFile($file, $new_file_content);
-	} else if($line=="encrypt local") {
-		print "Type your password: \n";
-		$key = trim(fgets(STDIN));
+	} else if($line=="encrypt-local") {
+		$key = CliHacker::pass();
 		$file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
 		$new_file_content = OpenSsl::encrypt($file_content_local, $key);
 		print "File encrypted. Want to push it to drive ? (yes/no) \n";
@@ -52,10 +53,9 @@
 		else
 			echo "What ?" . PHP_EOL;
 	} else if($line=="decrypt") {
-		print "Type your password: \n";
-		$key = trim(fgets(STDIN));
-		$new_file_content = OpenSsl::decrypt($key, $file_content);
+		$key = CliHacker::pass();
 
+		$new_file_content = OpenSsl::decrypt($key, $file_content);
 		print "Type what you want to search for (Regex) or hit ENTER to download the entire file: \n";
 		$tosearch = trim(fgets(STDIN));
 
@@ -74,8 +74,8 @@
 						echo $fileasarray[$i-$a] . PHP_EOL . "-------" . PHP_EOL;
 					}
 
-					echo Colorizer::set("Found {$tosearch} on line {$i}:", "yellow+bold") . PHP_EOL;
-					echo Colorizer::set($k, "green") . PHP_EOL;
+					echo CliHacker::style("Found {$tosearch} on line {$i}:", "yellow+bold") . PHP_EOL;
+					echo CliHacker::style($k, "green") . PHP_EOL;
 
 
 					for ($a=1; $a <= __LINES_BUFFER__; $a++) { 
@@ -89,10 +89,8 @@
 				}
 			}
 		}
-
 	} else if($line=="add") {
-		print "Type your password: \n";
-		$key = trim(fgets(STDIN));
+		$key = CliHacker::pass();
 		$new_file_content = OpenSsl::decrypt($key, $file_content);
 
 		print "Type what you want added to the file: \n";
