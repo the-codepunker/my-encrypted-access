@@ -33,9 +33,9 @@
 	     *  - nothing is displayed in CLI -
 	     * @return string
 	     */
-	    static function pass()
+	    static function pass($again = false)
 	    {
-	    	echo "Type your password: " . PHP_EOL;
+	    	echo ($again===false) ? "Type your password: " . PHP_EOL : "Confirm your password: " . PHP_EOL;
 
 	    	$oldStyle = exec('stty -g'); //cache old style
 

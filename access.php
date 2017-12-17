@@ -37,6 +37,11 @@
 
 	if($line=="encrypt") {
 		$key = CliHacker::pass();
+		$key2 = CliHacker::pass(true);
+
+		if($key !== $key2)
+			die("Passwords didn't match. File remains unchanged" . PHP_EOL);
+
 		$file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
 		$new_file_content = OpenSsl::encrypt($file_content_local, $key);
 		print "File encrypted. Want to push it to drive ? (yes/no) \n";
