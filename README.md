@@ -10,7 +10,7 @@ I wrote it to protect my crypto wallets passphrases and private keys as well as 
 
 	`git clone https://github.com/the-codepunker/my-encrypted-access.git && composer install`
 
-* Create a project with (Google Cloud)[https://console.cloud.google.com/apis] and download the client secret and client ID as json. Place it as secret.json in the root folder of the repo.
+* Create a project with (Google Cloud)[https://console.cloud.google.com/apis]. Choose other when asked for the type of app you are creating. Download the client secret and client ID as json. Place it as secret.json in the root folder of the repo.
 
 * Modify the `__FILE_NAME__` constant in `access.php` according to your needs. 
 
