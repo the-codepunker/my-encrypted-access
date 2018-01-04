@@ -5,7 +5,7 @@ It's main focus is to allow people that have a "passwords" file stored in Google
 I wrote it to protect my crypto wallets passphrases and private keys as well as other sensitive data.
 
 ## Installation and Usage
-* Make sure you have php installed (https://www.rosehosting.com/blog/install-php-7-1-with-nginx-on-an-ubuntu-16-04-vps/) along with composer (https://getcomposer.org/doc/00-intro.md)
+* Make sure you have php installed on your *\*nix* or on [windows](http://windows.php.net/download/) along with composer (https://getcomposer.org/doc/00-intro.md)
 * Fire up the project in your desired folder
 	`git clone https://github.com/the-codepunker/my-encrypted-access.git . && composer install`
 
