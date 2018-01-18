@@ -1,4 +1,5 @@
 <?php
+namespace Codepunker\GoogleDrive;
 
 /**
  * Handles CLI authentication with gDrive
@@ -18,7 +19,7 @@ class GoogleDriveAuthenticator
      */
     public function __construct()
     {
-        $this->gclient = new Google_Client();
+        $this->gclient = new \Google_Client();
         $this->gclient->setApplicationName(self::APPLICATION_NAME);
         $this->gclient->addScope(self::SCOPES);
         $this->gclient->setAuthConfig(self::CLIENT_SECRET_PATH);
@@ -33,7 +34,7 @@ class GoogleDriveAuthenticator
      */
     private function setClient()
     {
-        if (!file_exists(self::CREDENTIALS_PATH)) {            
+        if (!file_exists(self::CREDENTIALS_PATH)) {
             $authUrl = $this->gclient->createAuthUrl();
             printf("Open the following link in your browser:\n%s\n", $authUrl);
             print 'Enter verification code: ';
@@ -49,16 +50,14 @@ class GoogleDriveAuthenticator
             $this->gclient->refreshToken($this->gclient->getRefreshToken());
             file_put_contents(self::CREDENTIALS_PATH, json_encode($this->gclient->getAccessToken()));
         }
-
     }
 
     /**
      * returns the authenticated Google Api Client
      * @return Google_Client
      */
-    public function getClient() :Google_Client
+    public function getClient() :\Google_Client
     {
         return $this->gclient;
     }
 }
-
