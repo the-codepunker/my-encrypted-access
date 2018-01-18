@@ -19,12 +19,22 @@ class GoogleDriveAuthenticator
      */
     public function __construct()
     {
-        $this->gclient = new \Google_Client();
-        $this->gclient->setApplicationName(self::APPLICATION_NAME);
-        $this->gclient->addScope(self::SCOPES);
-        $this->gclient->setAuthConfig(self::CLIENT_SECRET_PATH);
-        $this->gclient->setAccessType('offline');
-        $this->setClient();
+        try {
+            $this->gclient = new \Google_Client();
+            $this->gclient->setApplicationName(self::APPLICATION_NAME);
+            $this->gclient->addScope(self::SCOPES);
+            $this->gclient->setAuthConfig(self::CLIENT_SECRET_PATH);
+            $this->gclient->setAccessType('offline');
+            $this->setClient();
+        } catch (\Exception $e) {
+            echo "It looks like the API access file is missing.
+Create a project on Google Cloud (".\Codepunker\Cli\CliHacker::style('https://console.cloud.google.com/apis', 'red+bold').").
+Make sure you select ".\Codepunker\Cli\CliHacker::style('**OTHER**', 'red+bold')." as type.
+Then make sure you've ".\Codepunker\Cli\CliHacker::style('**ENABLED**', 'red+bold')." the app.
+Download the client secret and client ID as json. 
+Then place it as ".\Codepunker\Cli\CliHacker::style('secret.json', 'yellow+bold')." in the root folder of the repo.\n";
+            die;
+        }
     }
 
     /**
