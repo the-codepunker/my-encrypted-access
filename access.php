@@ -23,6 +23,7 @@
         print "What to do ?
         - To encrypt a local file type 'encrypt'
         - To decrypt and search in the file type 'decrypt'
+        - To keep the decrypted file in memory and search in it type 'process'
         - To add something to the file and the re-upload it as encrypted type 'add'\n";
         $line = trim(fgets(STDIN));
     } else {
@@ -59,6 +60,45 @@
             file_put_contents(__DIR__ . '/' . __FILE_NAME__, $new_file_content);
         } else {
             echo "What ?" . PHP_EOL;
+        }
+    } elseif ($line=="process") {
+        $key = Codepunker\Cli\CliHacker::pass();
+        $new_file_content = Codepunker\Cipher\OpenSsl::decrypt($key, $file_content);
+
+        while(1) {            
+            print "Type what you want to search for (Regex): \n";
+            $tosearch = trim(fgets(STDIN));
+
+            if(empty($tosearch))
+                continue;
+
+            $fileasarray = explode(PHP_EOL, $new_file_content);
+            foreach ($fileasarray as $i => $k) {
+                if (preg_match($tosearch, $k) === 1) {
+                    for ($a=1; $a <= __LINES_BUFFER__; $a++) {
+                        if (!isset($fileasarray[$i-$a])) {
+                            break;
+                        }
+                        if (empty(trim($fileasarray[$i-$a]))) {
+                            continue;
+                        }
+                        echo $fileasarray[$i-$a] . PHP_EOL . "-------" . PHP_EOL;
+                    }
+
+                    echo Codepunker\Cli\CliHacker::style("Found {$tosearch} on line {$i}:", "yellow+bold") . PHP_EOL;
+                    echo Codepunker\Cli\CliHacker::style($k, "green") . PHP_EOL;
+
+                    for ($a=1; $a <= __LINES_BUFFER__; $a++) {
+                        if (!isset($fileasarray[$i+$a])) {
+                            break;
+                        }
+                        if (empty(trim($fileasarray[$i+$a]))) {
+                            continue;
+                        }
+                        echo $fileasarray[$i+$a] . PHP_EOL . "-------" . PHP_EOL;
+                    }
+                }
+            }
         }
     } elseif ($line=="decrypt") {
         $key = Codepunker\Cli\CliHacker::pass();
