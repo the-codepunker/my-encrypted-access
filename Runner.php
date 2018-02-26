@@ -16,6 +16,7 @@
 
             if (empty($tosearch)) {
                 file_put_contents(__DIR__ . '/' . __FILE_NAME__, $new_file_content);
+                echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File downloaded...", "green+bold");
             } else {
                 $fileasarray = explode(PHP_EOL, $new_file_content);
                 foreach ($fileasarray as $i => $k) {
@@ -64,17 +65,17 @@
             $new_file_content = OpenSsl::encrypt($file_content_local, $key);
             print "File encrypted. Want to push it to drive ? (yes/no) \n";
             $push = trim(fgets(STDIN));
-            while(!in_array($push, ['yes', 'no'])) {
+            do {
                 if ($push == 'yes') {
                     $service->updateFile($file, $new_file_content);
                     echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File updated on google drive ... ", "green+bold");
                 } elseif ($push == 'no') {
                     file_put_contents(__DIR__ . '/' . __FILE_NAME__, $new_file_content);
-                    echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File updated local drive ... ", "green+bold");
+                    echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File updated on local storage ... ", "green+bold");
                 } else {
                     echo CliHacker::style("What ?" . PHP_EOL, "red");
                 }
-            }
+            } while (!in_array($push, ['yes', 'no']));
         }
 
         static function add($file_content, $service, $file)
