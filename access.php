@@ -2,7 +2,7 @@
     use PhpSchool\CliMenu\CliMenu;
     use PhpSchool\CliMenu\CliMenuBuilder;
 
-    (php_sapi_name() === 'cli') or die("cli only");
+    (php_sapi_name() === 'cli' && stripos(PHP_OS, 'win')===false) or die("cli on *nix only");
     require_once __DIR__ . '/vendor/autoload.php';
     spl_autoload_register(function ($class) {
         $class = explode('\\', $class);
@@ -49,17 +49,19 @@
         }
     };
 
-    $art = <<<ART
-    ##### ;#####  ,####@  ,####:  
-   #####' ######` ,##@### ,####:  
-  `##,   ,##` `##.,#@ `##.,##`  
-  .##    :##   ##:,#@  ##:,####`  
-   `##; `  ##, .##.,#@  ##.,##`    
-   ###### #####+. ,###### ,####@  
-    #####  @####  ,####@  ,####@  
-ART;
+    $art = file_get_contents(__DIR__ . '/asciilogo.txt');
 
+    $cols = (int)shell_exec('tput cols');
+    $margin = 5;
     $menu = (new CliMenuBuilder)
+        ->setWidth($cols)
+        ->setBackgroundColour('default')
+        ->setForegroundColour('default')
+        ->setPadding(1)
+        ->setMargin($margin)
+        ->setUnselectedMarker(' ')
+        ->setSelectedMarker('>')
+        ->setTitleSeparator('- ')
         ->addAsciiArt($art, PhpSchool\CliMenu\MenuItem\AsciiArtItem::POSITION_CENTER)
         ->addLineBreak('-')
         ->addItem('Encrypt Local File', $cb)
