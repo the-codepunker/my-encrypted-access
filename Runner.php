@@ -1,0 +1,94 @@
+<?php
+
+    namespace CodePunker\Cli;
+
+    use Codepunker\Cipher\OpenSsl as OpenSsl;
+
+    class Runner
+    {
+        static function decrypt($file_content)
+        {
+            $key = CliHacker::pass();
+
+            $new_file_content = OpenSsl::decrypt($key, $file_content);
+            print "Type what you want to search for (Regex) or hit ENTER to download the entire file: \n";
+            $tosearch = trim(fgets(STDIN));
+
+            if (empty($tosearch)) {
+                file_put_contents(__DIR__ . '/' . __FILE_NAME__, $new_file_content);
+            } else {
+                $fileasarray = explode(PHP_EOL, $new_file_content);
+                foreach ($fileasarray as $i => $k) {
+                    if (preg_match($tosearch, $k) === 1) {
+                        for ($a=1; $a <= __LINES_BUFFER__; $a++) {
+                            if (!isset($fileasarray[$i-$a])) {
+                                break;
+                            }
+                            if (empty(trim($fileasarray[$i-$a]))) {
+                                continue;
+                            }
+                            echo $fileasarray[$i-$a] . PHP_EOL . "-------" . PHP_EOL;
+                        }
+
+                        echo CliHacker::style("Found {$tosearch} on line {$i}:", "yellow+bold") . PHP_EOL;
+                        echo CliHacker::style($k, "green") . PHP_EOL;
+
+
+                        for ($a=1; $a <= __LINES_BUFFER__; $a++) {
+                            if (!isset($fileasarray[$i+$a])) {
+                                break;
+                            }
+                            if (empty(trim($fileasarray[$i+$a]))) {
+                                continue;
+                            }
+                            echo $fileasarray[$i+$a] . PHP_EOL . "-------" . PHP_EOL;
+                        }
+                    }
+                }
+
+                echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "Search finished ... Enter to search again", "green+bold");
+            }
+        }
+
+
+        static function encrypt($file_content, $service, $file)
+        {
+            $key = CliHacker::pass();
+            $key2 = CliHacker::pass(true);
+
+            if ($key !== $key2) {
+                die("Passwords didn't match. File remains unchanged" . PHP_EOL);
+            }
+
+            $file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
+            $new_file_content = OpenSsl::encrypt($file_content_local, $key);
+            print "File encrypted. Want to push it to drive ? (yes/no) \n";
+            $push = trim(fgets(STDIN));
+            while(!in_array($push, ['yes', 'no'])) {
+                if ($push == 'yes') {
+                    $service->updateFile($file, $new_file_content);
+                    echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File updated on google drive ... ", "green+bold");
+                } elseif ($push == 'no') {
+                    file_put_contents(__DIR__ . '/' . __FILE_NAME__, $new_file_content);
+                    echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File updated local drive ... ", "green+bold");
+                } else {
+                    echo CliHacker::style("What ?" . PHP_EOL, "red");
+                }
+            }
+        }
+
+        static function add($file_content, $service, $file)
+        {
+            $key = CliHacker::pass();
+            $new_file_content = OpenSsl::decrypt($key, $file_content);
+
+            print "Type what you want added to the file: \n";
+            $toadd = trim(fgets(STDIN));
+            $new_file_content .= "\n\n================\n\n\n{$toadd}\n";
+
+            $new_file_content = OpenSsl::encrypt($new_file_content, $key);
+            $service->updateFile($file, $new_file_content);
+
+            echo CliHacker::style(PHP_EOL . "Done! File Updated " . PHP_EOL, "green+bold");
+        }
+    }
