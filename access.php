@@ -2,7 +2,7 @@
     use PhpSchool\CliMenu\CliMenu;
     use PhpSchool\CliMenu\CliMenuBuilder;
 
-    (php_sapi_name() === 'cli' && stripos(PHP_OS, 'win')===false) or die("cli on *nix only");
+    (php_sapi_name() === 'cli' && stripos(PHP_OS, 'winnt')===false) or die("cli on *nix only");
     require_once __DIR__ . '/vendor/autoload.php';
     spl_autoload_register(function ($class) {
         $class = explode('\\', $class);
