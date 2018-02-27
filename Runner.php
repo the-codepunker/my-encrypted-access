@@ -4,13 +4,32 @@
 
     use Codepunker\Cipher\OpenSsl as OpenSsl;
 
+    /**
+     * executes actions based on menu selection
+     */
     class Runner
     {
+        static $pass = null;
+
+        /**
+         * * decrypts the remote with the provided password
+         * * if pass is correct remembers the password
+         * * allows to search via regex or download the decrypted file
+         * @param  [string] $file_content encrypted file content
+         * @return void
+         */
         static function decrypt($file_content)
         {
-            $key = CliHacker::pass();
+            $key = (is_null(self::$pass)) ? CliHacker::pass() : self::$pass;
+            try {
+                $new_file_content = OpenSsl::decrypt($key, $file_content);
+                self::$pass = $key;
+            } catch (\Exception $e) {
+                self::$pass = null;
+                echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . $e->getMessage() . "... Enter to search again", "red");
+                return;
+            }
 
-            $new_file_content = OpenSsl::decrypt($key, $file_content);
             print "Type what you want to search for (Regex) or hit ENTER to download the entire file: \n";
             $tosearch = trim(fgets(STDIN));
 
@@ -51,7 +70,6 @@
             }
         }
 
-
         static function encrypt($file_content, $service, $file)
         {
             $key = CliHacker::pass();
@@ -81,7 +99,12 @@
         static function add($file_content, $service, $file)
         {
             $key = CliHacker::pass();
-            $new_file_content = OpenSsl::decrypt($key, $file_content);
+            try {
+                $new_file_content = OpenSsl::decrypt($key, $file_content);
+            } catch (\Exception $e) {
+                echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . $e->getMessage() . "... Hit Enter to try again", "red");
+                return;
+            }
 
             print "Type what you want added to the file: \n";
             $toadd = trim(fgets(STDIN));

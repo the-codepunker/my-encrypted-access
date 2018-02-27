@@ -50,8 +50,8 @@ class OpenSsl
         $calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary = true);
         if (hash_equals($hmac, $calcmac)) { //timing attack safe comparison
             return $original_plaintext;
-        } else {
-            return 'Unable to decrypt' . PHP_EOL;
         }
+
+        throw new \Exception('Unable to decrypt', 1);
     }
 }
