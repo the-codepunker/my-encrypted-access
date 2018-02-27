@@ -1,5 +1,6 @@
 /secret.json
 /*.txt
+!/asciilogo.txt
 /vendor
 /.DS_Store
 /credentials.json
