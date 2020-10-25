@@ -6,3 +6,6 @@
 /credentials.json
 /composer.lock
 /access.sublime*
+/otp_secrets.json
+/.idea
+/.vscode

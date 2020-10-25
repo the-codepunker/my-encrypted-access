@@ -1,6 +1,6 @@
 <?php
     use PhpSchool\CliMenu\CliMenu;
-    use PhpSchool\CliMenu\CliMenuBuilder;
+    use PhpSchool\CliMenu\Builder\CliMenuBuilder;
 
     (php_sapi_name() === 'cli' && stripos(PHP_OS, 'winnt')===false) or die("cli on *nix only");
     require_once __DIR__ . '/vendor/autoload.php';
@@ -18,55 +18,43 @@
     //set 0 to disable
     define('__LINES_BUFFER__', 2);
 
-    $auth = new Codepunker\GoogleDrive\GoogleDriveAuthenticator();
-    $service = new Codepunker\GoogleDrive\GoogleDriveInteractor(new Google_Service_Drive($auth->getClient()));
+    $google_drive_auth = new Codepunker\GoogleDrive\GoogleDriveAuthenticator();
+    $google_drive_service = new Codepunker\GoogleDrive\GoogleDriveInteractor(new \Google_Service_Drive($google_drive_auth->getClient()));
 
+    //download the encrypted file from google drive
     try {
-        $file = $service->findFiles([
+        $google_drive_file = $google_drive_service->findFiles([
             'q'         => "name contains '" . __FILE_NAME__ . "' and trashed = false",
             'orderBy'   => "modifiedTime desc",
             'spaces'    => "drive"
         ], $expected = 1);
-        $file_content = $service->downloadFile($file->id);
+        $google_drive_file_content = $google_drive_service->downloadFile($google_drive_file->id);
     } catch (Exception $e) {
         print "An error occurred: " . $e->getMessage() . PHP_EOL;
-        exit;
+        die;
     }
 
-    $cb = function (CliMenu $menu) use ($file_content, $service, $file) {
-        $item =  $menu->getSelectedItem()->getText();
-        switch ($item) {
-            case 'Encrypt Local File':
-                CodePunker\Cli\Runner::encrypt($file_content, $service, $file);
-                break;
-            case 'Append Data':
-                CodePunker\Cli\Runner::add($file_content, $service, $file);
-                break;
-            case 'Decrypt':
-            default:
-                CodePunker\Cli\Runner::decrypt($file_content);
-                break;
-        }
-    };
-
-    $art = file_get_contents(__DIR__ . '/asciilogo.txt');
-
-    $cols = (int)shell_exec('tput cols');
-    $margin = 5;
     $menu = (new CliMenuBuilder)
-        ->setWidth($cols)
+        ->setWidth((int)shell_exec('tput cols'))
         ->setBackgroundColour('default')
         ->setForegroundColour('default')
         ->setPadding(1)
-        ->setMargin($margin)
-        ->setUnselectedMarker(' ')
-        ->setSelectedMarker('>')
+        ->setMargin(5)
         ->setTitleSeparator('- ')
-        ->addAsciiArt($art, PhpSchool\CliMenu\MenuItem\AsciiArtItem::POSITION_CENTER)
+        ->addAsciiArt(file_get_contents(__DIR__ . '/asciilogo.txt'), PhpSchool\CliMenu\MenuItem\AsciiArtItem::POSITION_CENTER)
         ->addLineBreak('-')
-        ->addItem('Encrypt Local File', $cb)
-        ->addItem('Decrypt', $cb)
-        ->addItem('Append Data', $cb)
+        ->addItem('Encrypt Local File', function(CliMenu $menu) {
+            CodePunker\Cli\Runner::encrypt();
+        })
+        ->addItem('Decrypt', function(CliMenu $menu) {
+            CodePunker\Cli\Runner::decrypt();
+        })
+        ->addItem('Append Data', function(CliMenu $menu) {
+            CodePunker\Cli\Runner::add();
+        })
+        ->addItem('Authenticator', function(CliMenu $menu) {
+            CodePunker\Cli\Runner::totp();
+        })
         ->addLineBreak('-')
         ->build();
 

@@ -1,6 +1,7 @@
 {
     "require": {
         "google/apiclient": "^2.0",
-        "php-school/cli-menu": "^2.1"
+        "php-school/cli-menu": "^4.1",
+        "spomky-labs/otphp": "^10.0"
     }
 }
