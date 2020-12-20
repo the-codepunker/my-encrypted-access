@@ -39,16 +39,16 @@
                 ->setTitleSeparator('- ')
                 ->addAsciiArt(file_get_contents(__DIR__ . '/asciilogo.txt'), PhpSchool\CliMenu\MenuItem\AsciiArtItem::POSITION_CENTER)
                 ->addLineBreak('-')
-                ->addItem('Encrypt Local File', function(CliMenu $menu) {
-                    CodePunker\Cli\Runner::encrypt();
-                })
-                ->addItem('Decrypt', function(CliMenu $menu) {
+                ->addItem('Decrypt and Search Remote File', function(CliMenu $menu) {
                     CodePunker\Cli\Runner::decrypt();
                 })
-                ->addItem('Append Data', function(CliMenu $menu) {
+                ->addItem('Add/Append Data To Remote File', function(CliMenu $menu) {
                     CodePunker\Cli\Runner::add();
                 })
-                ->addItem('Authenticator', function(CliMenu $menu) {
+                ->addItem('Encrypt Plain Text Local File', function(CliMenu $menu) {
+                    CodePunker\Cli\Runner::encrypt();
+                })
+                ->addItem('TOTP Authenticator', function(CliMenu $menu) {
                     CodePunker\Cli\Runner::totp();
                 })
                 ->addLineBreak('-')
@@ -63,9 +63,9 @@
                 ->setTitleSeparator('- ')
                 ->addAsciiArt(file_get_contents(__DIR__ . '/asciilogo.txt'), PhpSchool\CliMenu\MenuItem\AsciiArtItem::POSITION_CENTER)
                 ->addLineBreak('-')
-                ->addItem('Load Existing File', function(CliMenu $menu) {
+                ->addItem('Start Application', function(CliMenu $menu) {
                     CodePunker\Cli\Runner::initialFileDownload();
-                })->addItem('Initial File Upload', function(CliMenu $menu) {
+                })->addItem('Initial File Upload (New Installations)', function(CliMenu $menu) {
                     CodePunker\Cli\Runner::initialFileUpload();
                 })->build();
         }

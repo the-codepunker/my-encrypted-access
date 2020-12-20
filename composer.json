@@ -1,4 +1,16 @@
 {
+    "name": "codepunker/my_encrypted_access",
+    "description": "A small cli client that encrypts and searches inside files in Google Drive.",
+    "version": "0.2.0",
+    "readme": "README.md",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gheorghe Daniel",
+            "email": "info@codepunker.com",
+            "homepage": "https://www.codepunker.com"
+        }
+    ],
     "require": {
         "google/apiclient": "^2.0",
         "php-school/cli-menu": "^4.1",
