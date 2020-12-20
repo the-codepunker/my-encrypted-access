@@ -46,7 +46,13 @@
             } else {
                 $fileasarray = explode(PHP_EOL, $new_file_content);
                 foreach ($fileasarray as $i => $k) {
-                    if (preg_match($tosearch, $k) === 1) {
+                    try {
+                        $search_outcome = preg_match($tosearch, $k);
+                    } catch (\Throwable $th) {
+                        echo CliHacker::style("Wrong regular expression... Hit enter to search again", "red") . PHP_EOL;
+                        return;
+                    }
+                    if ($search_outcome === 1) {
                         for ($a=1; $a <= __LINES_BUFFER__; $a++) {
                             if (!isset($fileasarray[$i-$a])) {
                                 break;

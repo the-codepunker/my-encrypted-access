@@ -19,6 +19,12 @@
     //set 0 to disable
     define('__LINES_BUFFER__', 2);
 
+    function exceptions_error_handler($severity, $message, $filename, $lineno) {
+        throw new ErrorException($message, 0, $severity, $filename, $lineno);
+    }
+
+    set_error_handler('exceptions_error_handler');
+
     $google_drive_auth = new Codepunker\GoogleDrive\GoogleDriveAuthenticator();
     $google_drive_service = new Codepunker\GoogleDrive\GoogleDriveInteractor(new \Google_Service_Drive($google_drive_auth->getClient()));
     $google_drive_file = null;
