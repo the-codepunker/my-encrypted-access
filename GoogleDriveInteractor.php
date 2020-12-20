@@ -52,15 +52,35 @@ class GoogleDriveInteractor
     {
         $new_drive_file = new \Google_Service_Drive_DriveFile();
 
-        $additionalParams = array(
+        $additionalParams = [
             'data' => $data,
             'mimeType' => 'text/plain'
-        );
+        ];
 
         // Send the request to the API.
         $updatedFile = $this->service->files->update($drive_file->id, $new_drive_file, $additionalParams);
         return $updatedFile;
     }
+
+    
+    public function uploadNewFile(string $data)
+    {
+        $new_drive_file = new \Google_Service_Drive_DriveFile();
+        $new_drive_file->setName(__FILE_NAME__);
+        $new_drive_file->setDescription(__DESCRIPTION__);
+        $new_drive_file->setMimeType('text/plain');
+
+        $additionalParams = [
+            'data' => $data,
+            'mimeType' => 'text/plain'
+        ];
+
+        // Send the request to the API.
+        $createdFile = $this->service->files->create($new_drive_file, $additionalParams);
+        return $createdFile;
+    }
+
+
 
     /**
      * downloads the contents of a file

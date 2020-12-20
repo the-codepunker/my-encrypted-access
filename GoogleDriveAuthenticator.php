@@ -10,7 +10,7 @@ class GoogleDriveAuthenticator
     const APPLICATION_NAME = 'My Access Management';
     const CREDENTIALS_PATH = __DIR__ . '/credentials.json';
     const CLIENT_SECRET_PATH = __DIR__ . '/secret.json';
-    const SCOPES = 'https://www.googleapis.com/auth/drive';
+    const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
     private $gclient;
 

@@ -112,6 +112,63 @@
             } while (!in_array($push, ['yes', 'no']));
         }
 
+        static function initialFileDownload()
+        {
+            global $menu;
+            global $google_drive_service;
+            global $google_drive_file;
+            global $google_drive_file_content;
+
+            //download the encrypted file from google drive
+            try {
+                $google_drive_file = $google_drive_service->findFiles([
+                    'q'         => "name contains '" . __FILE_NAME__ . "' and trashed = false",
+                    'orderBy'   => "modifiedTime desc",
+                    'spaces'    => "drive"
+                ], $expected = 1);
+                $google_drive_file_content = $google_drive_service->downloadFile($google_drive_file->id);
+                $menu->close();
+                init();
+            } catch (\Exception $e) {
+                print "File not found: " . $e->getMessage() . PHP_EOL;
+                print PHP_EOL;
+                print "If this is the first time you opened this app, select initial file upload" . PHP_EOL;
+                die;
+            }
+        }
+
+        static function initialFileUpload()
+        {
+            global $menu;
+            global $google_drive_service;
+            global $google_drive_file;
+
+            $result = $menu->askText()
+                ->setPromptText('This will overwrite any existing encrypted file. Are you sure you want to do this ? (Yes/No)')
+                ->setPlaceholderText('')
+                ->ask();
+
+            $answer = strtolower(trim($result->fetch()));
+            if($answer=='yes') {               
+                $key = CliHacker::pass();
+                $key2 = CliHacker::pass(true);
+
+                if ($key !== $key2) {
+                    die("Passwords didn't match." . PHP_EOL);
+                }
+
+                $file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
+                $new_file_content = OpenSsl::encrypt($file_content_local, $key);
+
+                $google_drive_service->uploadNewFile($new_file_content);
+                echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File uploaded on google drive. Now you can load it.", "green+bold");
+
+            } else {
+                die("Bailed out..." . PHP_EOL);
+            }
+
+        }
+
         static function add()
         {
             global $menu;
