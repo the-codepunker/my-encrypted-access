@@ -95,7 +95,12 @@
                 die("Passwords didn't match. File remains unchanged" . PHP_EOL);
             }
 
-            $file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
+            if(file_exists(__DIR__ . '/' . __FILE_NAME__) && is_readable(__DIR__ . '/' . __FILE_NAME__)) {
+                $file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
+            } else {
+                echo CliHacker::style("Lcoal file doesn't exist." . PHP_EOL, "red");
+                return;
+            }
             $new_file_content = OpenSsl::encrypt($file_content_local, $key);
 
 
@@ -163,12 +168,15 @@
                     die("Passwords didn't match." . PHP_EOL);
                 }
 
-                $file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
-                $new_file_content = OpenSsl::encrypt($file_content_local, $key);
-
-                $google_drive_service->uploadNewFile($new_file_content);
-                echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File uploaded on google drive. Now you can load it.", "green+bold");
-
+                if(file_exists(__DIR__ . '/' . __FILE_NAME__) && is_readable(__DIR__ . '/' . __FILE_NAME__)) {
+                    $file_content_local = file_get_contents(__DIR__ . '/' . __FILE_NAME__);
+                    $new_file_content = OpenSsl::encrypt($file_content_local, $key);
+    
+                    $google_drive_service->uploadNewFile($new_file_content);
+                    echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File uploaded on google drive. Now you can load it.", "green+bold");
+                } else {
+                    die("File is missing. Bailed out..." . PHP_EOL);
+                }
             } else {
                 die("Bailed out..." . PHP_EOL);
             }
@@ -207,6 +215,10 @@
         static function totp()
         {
             global $menu;
+            if(!file_exists(__DIR__ . '/otp_secrets.json') || !is_readable(__DIR__ . '/otp_secrets.json')) {
+                echo CliHacker::style("The otp_secrets.json file is missing ... Hit Enter to try again", "red");
+                return;
+            }
             $secrets = json_decode(file_get_contents(__DIR__ . '/otp_secrets.json'), true);
             foreach($secrets as $provider => $secret) {
                 $otp = TOTP::create($secret);

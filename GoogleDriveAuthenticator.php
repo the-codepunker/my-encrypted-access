@@ -57,7 +57,12 @@ Then place it as ".\Codepunker\Cli\CliHacker::style('secret.json', 'yellow+bold'
         $tkn = file_get_contents(self::CREDENTIALS_PATH);
         $this->gclient->setAccessToken($tkn);
         if ($this->gclient->isAccessTokenExpired()) {
-            $this->gclient->refreshToken($this->gclient->getRefreshToken());
+            $outcome = $this->gclient->refreshToken($this->gclient->getRefreshToken());
+            if(!empty($outcome['error'])) {
+                unlink(self::CREDENTIALS_PATH);
+                echo \Codepunker\Cli\CliHacker::style('Unable to refresh token. Re-authorize the app.', 'red+bold') . PHP_EOL;
+                die();
+            }
             file_put_contents(self::CREDENTIALS_PATH, json_encode($this->gclient->getAccessToken()));
         }
     }
