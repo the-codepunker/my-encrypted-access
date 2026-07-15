@@ -26,4 +26,4 @@ A command line tool written in PHP that allows storage, retrieval, and content s
 
 Donations are welcome: 
 
-	ETH :: 0x9335fE2BCdca68407ed5Ae5FB196d2c69CAf96Da
+	[paypal.me/punkedschoolofcoding](https://www.paypal.me/punkedschoolofcoding)
