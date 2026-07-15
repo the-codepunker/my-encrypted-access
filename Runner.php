@@ -221,7 +221,7 @@
             }
             $secrets = json_decode(file_get_contents(__DIR__ . '/otp_secrets.json'), true);
             foreach($secrets as $provider => $secret) {
-                $otp = TOTP::create($secret);
+                $otp = TOTP::createFromSecret($secret, new \OTPHP\InternalClock());
         
                 $timecode = (int) floor(time()/$otp->getPeriod());
                 $next_otp_at = ($timecode+1)*$otp->getPeriod();
