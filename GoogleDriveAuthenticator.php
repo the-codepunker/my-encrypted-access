@@ -1,6 +1,8 @@
 <?php
 namespace Codepunker\GoogleDrive;
 
+use Google\Client;
+
 /**
  * Handles CLI authentication with gDrive
  * regenerates tokens and such...
@@ -12,6 +14,7 @@ class GoogleDriveAuthenticator
     const CLIENT_SECRET_PATH = __DIR__ . '/secret.json';
     const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
+    /* @var Client $gclient */
     private $gclient;
 
     /**
@@ -20,7 +23,7 @@ class GoogleDriveAuthenticator
     public function __construct()
     {
         try {
-            $this->gclient = new \Google_Client();
+            $this->gclient = new Client();
             $this->gclient->setApplicationName(self::APPLICATION_NAME);
             $this->gclient->addScope(self::SCOPES);
             $this->gclient->setAuthConfig(self::CLIENT_SECRET_PATH);
@@ -69,9 +72,9 @@ Then place it as ".\Codepunker\Cli\CliHacker::style('secret.json', 'yellow+bold'
 
     /**
      * returns the authenticated Google Api Client
-     * @return Google_Client
+     * @return Client
      */
-    public function getClient() :\Google_Client
+    public function getClient() :Client
     {
         return $this->gclient;
     }

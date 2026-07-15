@@ -10,7 +10,7 @@ class OpenSsl
      * encrypts a file and returns the full ciphertext
      * @param  string $plain the plain text string to encrypt
      * @param  string $key   the plain text key
-     * @return [string]        base_64 (  iv + hmac + encrypted_text )
+     * @return string base_64 (  iv + hmac + encrypted_text )
      */
     public static function encrypt($plain, $key)
     {

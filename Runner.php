@@ -33,6 +33,7 @@
                 return;
             }
 
+            /** @var \PhpSchool\CliMenu\CliMenu $menu */
             $result = $menu->askText()
                 ->setPromptText('Type what you want to search for or "download" to download the entire file')
                 ->setPlaceholderText('/regex|download/i')
@@ -103,7 +104,7 @@
             }
             $new_file_content = OpenSsl::encrypt($file_content_local, $key);
 
-
+            /** @var \PhpSchool\CliMenu\CliMenu $menu */
             $result = $menu->askText()
                 ->setPromptText('File encrypted. Want to push it to drive ? (yes/no)')
                 ->setPlaceholderText('')
@@ -112,6 +113,7 @@
             $push = trim($result->fetch());
             do {
                 if ($push == 'yes') {
+                    /** @var \Google_Service_Drive_DriveFile $google_drive_file */
                     $google_drive_service->updateFile($google_drive_file, (string)$new_file_content);
                     echo CliHacker::style(PHP_EOL . "====" . PHP_EOL . "File updated on google drive.", "green+bold");
                 } elseif ($push == 'no') {
@@ -138,6 +140,7 @@
                     'spaces'    => "drive"
                 ], $expected = 1);
                 $google_drive_file_content = $google_drive_service->downloadFile($google_drive_file->id);
+                /** @var \PhpSchool\CliMenu\CliMenu $menu */
                 $menu->close();
                 init();
             } catch (\Exception $e) {
@@ -154,6 +157,7 @@
             global $google_drive_service;
             global $google_drive_file;
 
+            /** @var \PhpSchool\CliMenu\CliMenu $menu */
             $result = $menu->askText()
                 ->setPromptText('This will overwrite any existing encrypted file. Are you sure you want to do this ? (Yes/No)')
                 ->setPlaceholderText('')
@@ -198,6 +202,7 @@
                 return;
             }
 
+            /** @var \PhpSchool\CliMenu\CliMenu $menu */
             $result = $menu->askText()
                 ->setPromptText('Type what you want added to the file')
                 ->setPlaceholderText('')
@@ -207,6 +212,8 @@
             $new_file_content .= "\n\n================\n\n\n{$toadd}\n";
 
             $new_file_content = OpenSsl::encrypt($new_file_content, $key);
+
+            /** @var \Google_Service_Drive_DriveFile $google_drive_file */
             $google_drive_service->updateFile($google_drive_file, (string)$new_file_content);
 
             echo CliHacker::style(PHP_EOL . "Done! File Updated " . PHP_EOL, "green+bold");

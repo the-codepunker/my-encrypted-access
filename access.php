@@ -26,9 +26,13 @@
     set_error_handler('exceptions_error_handler');
 
     $google_drive_auth = new Codepunker\GoogleDrive\GoogleDriveAuthenticator();
-    $google_drive_service = new Codepunker\GoogleDrive\GoogleDriveInteractor(new \Google_Service_Drive($google_drive_auth->getClient()));
+    /** @var Google_Client $client */
+    $client = $google_drive_auth->getClient();
+    $service = new \Google_Service_Drive($client);
+    $google_drive_service = new Codepunker\GoogleDrive\GoogleDriveInteractor($service);
     $google_drive_file = null;
     $google_drive_file_content = null;
+    /** @var CliMenuBuilder $menu */
     $menu = null;
 
     function init() {
