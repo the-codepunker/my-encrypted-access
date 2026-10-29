@@ -46,6 +46,7 @@ class CliHacker
         $oldStyle = exec('stty -g'); //cache old style
 
         shell_exec('stty -echo'); //remove echo
+        stream_set_blocking(STDIN, true);
             $key = rtrim(fgets(STDIN), "\n");
         exec('stty ' . $oldStyle); //put echo back
 

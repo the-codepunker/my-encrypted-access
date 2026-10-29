@@ -33,6 +33,7 @@
                 return;
             }
 
+            stream_set_blocking(STDIN, true);
             /** @var \PhpSchool\CliMenu\CliMenu $menu */
             $result = $menu->askText()
                 ->setPromptText('Type what you want to search for or "download" to download the entire file')
@@ -104,6 +105,7 @@
             }
             $new_file_content = OpenSsl::encrypt($file_content_local, $key);
 
+            stream_set_blocking(STDIN, true);
             /** @var \PhpSchool\CliMenu\CliMenu $menu */
             $result = $menu->askText()
                 ->setPromptText('File encrypted. Want to push it to drive ? (yes/no)')
@@ -157,6 +159,7 @@
             global $google_drive_service;
             global $google_drive_file;
 
+            stream_set_blocking(STDIN, true);
             /** @var \PhpSchool\CliMenu\CliMenu $menu */
             $result = $menu->askText()
                 ->setPromptText('This will overwrite any existing encrypted file. Are you sure you want to do this ? (Yes/No)')
@@ -202,6 +205,7 @@
                 return;
             }
 
+            stream_set_blocking(STDIN, true);
             /** @var \PhpSchool\CliMenu\CliMenu $menu */
             $result = $menu->askText()
                 ->setPromptText('Type what you want added to the file')
