@@ -40,7 +40,7 @@
         global $menu;
 
         if($google_drive_file!==null) {
-            $menu = (new CliMenuBuilder)
+            $menu = (new CliMenuBuilder(Codepunker\Cli\CliHacker::terminal()))
                 ->setWidth((int)shell_exec('tput cols'))
                 ->setBackgroundColour('default')
                 ->setForegroundColour('default')
@@ -64,7 +64,7 @@
                 ->addLineBreak('-')
                 ->build();
         } else {
-            $menu = (new CliMenuBuilder)
+            $menu = (new CliMenuBuilder(Codepunker\Cli\CliHacker::terminal()))
                 ->setWidth((int)shell_exec('tput cols'))
                 ->setBackgroundColour('default')
                 ->setForegroundColour('default')

@@ -52,4 +52,35 @@ class CliHacker
 
         return $key;
     }
+
+    /**
+     * Creates a Terminal instance whose input stream stays in blocking mode.
+     * php-school/terminal 0.3.0 sets STDIN to non-blocking after every read,
+     * which also makes STDOUT non-blocking on shared TTY file descriptors and
+     * causes partial writes / corrupted ANSI output when redrawing the menu.
+     */
+    public static function terminal(): \PhpSchool\Terminal\Terminal
+    {
+        $input = new class implements \PhpSchool\Terminal\IO\InputStream {
+            public function read(int $numBytes, callable $callback): void
+            {
+                if ($numBytes < 1) {
+                    throw new \InvalidArgumentException('Number of bytes to read must be greater than 0');
+                }
+
+                stream_set_blocking(\STDIN, true);
+                $callback((string) fread(\STDIN, $numBytes));
+            }
+
+            public function isInteractive(): bool
+            {
+                return stream_isatty(\STDIN);
+            }
+        };
+
+        return new \PhpSchool\Terminal\UnixTerminal(
+            $input,
+            new \PhpSchool\Terminal\IO\ResourceOutputStream()
+        );
+    }
 }
